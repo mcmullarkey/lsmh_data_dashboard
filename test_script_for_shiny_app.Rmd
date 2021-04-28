@@ -42,32 +42,36 @@ data_list <- files %>%
   map(~dplyr::select(.x, -contains("tim"))) %>% 
   print()
 
-# Breaking out individual datasets to do data cleaning that's necessary for individual dataframes
+# Breaking out individual datasets to do data cleaning that's necessary for individual dataframes https://stackoverflow.com/questions/59169631/split-a-list-into-separate-data-frame-in-r
 
 map(data_list, ~tibble(.x)) %>%
     set_names(str_c("df_", 1:4)) %>% 
     list2env(.GlobalEnv)
 
-empower <- df_1 %>% 
-  dplyr::rename(age = child_age, race = parent_ethnicity) %>% 
-  mutate(parent_sgm_ids= rowSums(dplyr::select(., contains("parent_gender")), na.rm = T) - 1,
-         child_sgm_ids= rowSums(dplyr::select(., contains("child_gender")), na.rm = T) - 1) %>% 
-  dplyr::select(contains("sgm")) %>% 
-  print()
+# Cleaning Empower data
 
 empower <- df_1 %>% 
-  dplyr::rename(age = child_age, race = parent_ethnicity) %>% 
+  dplyr::rename(racial_identity = parent_ethnicity) %>% 
   rowwise() %>% 
-  mutate(parent_sgm_ids = any(c_across(c(parent_gender_agender,parent_gender_intersex, parent_gender_other:parent_gender_notsure))),
-         child_sgm_ids = any(c_across(c(child_gender_agender,child_gender_intersex, child_gender_other:child_gender_notsure)))) %>% 
+  mutate(sgm = any(c_across(c(parent_gender_agender,parent_gender_intersex, parent_gender_other:parent_gender_notsure)))) %>% 
   ungroup() %>% 
-  mutate(randomized = factor(ifelse(is.na(condition), "No", "Yes")),
+  mutate(race_minoritized = factor(case_when(
+    
+    str_detect(racial_identity, "White") == TRUE ~ "No",
+    str_detect(racial_identity, "White") == FALSE &  str_detect(parent_ethnicity_other_text, "white") ~ "No",
+    TRUE ~ "Yes"
+    
+    )),
+         randomized = factor(ifelse(is.na(condition), "No", "Yes")),
          qual_feed = factor(ifelse(is.na(pfs_liked), "No", "Yes")),
          sitb_assess = factor("No"),
-         non_rand_treat = factor("No")) %>% 
-  dplyr::select(randomized, sitb_assess, non_rand_treat) %>% 
+         non_rand_treat = factor("No"),
+         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         age = 18, # We don't know the age but want these folks to be included in the dashboard for folks looking for adults
+         parent_report = factor("Yes"),
+         self_report = factor("Yes")) %>% 
+  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
   print()
-
 
 
 ```
