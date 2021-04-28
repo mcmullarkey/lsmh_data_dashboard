@@ -27,7 +27,18 @@ library(diffdf)
 
 ```{r reading in the data}
 
+# Want a function that reads in list of dataframes
 
+# find all file names ending in .csv 
+files <- dir(pattern = "*.csv")
+
+# Reading in all the files into a list of dataframes
+
+data_list <- files %>%
+  map(read_csv) %>% 
+  map(~dplyr::select(.x, contains("ethnicity"),contains("race"),contains("age"),contains("sex"),contains("gender"),contains("cond"),
+                     contains("qual"),contains("like"),contains("dislike"),contains("pfs")),contains("pswq"),contains("cdi"),contains("idas"),contains("mfq"),
+                     contains("ss_choice_factor"),contains("identify_diff_gender_than_bio_sex_factor"),-contains("tim"))
 
 ```
 
