@@ -1,0 +1,33 @@
+---
+title: "Test Script for Shiny App"
+author: "Michael Mullarkey"
+date: "4/28/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE, cache = FALSE}
+require("knitr")
+## setting working directory
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, warning = FALSE, message = FALSE, include = FALSE)
+
+```
+
+```{r loading packages}
+
+if(!require(tidyverse)){install.packages('tidyverse')}
+library(tidyverse)
+if(!require(skimr)){install.packages('skimr')}
+library(skimr)
+if(!require(glue)){install.packages('glue')}
+library(glue)
+if(!require(diffdf)){install.packages('diffdf')}
+library(diffdf)
+
+```
+
+```{r reading in the data}
+
+
+
+```
+
