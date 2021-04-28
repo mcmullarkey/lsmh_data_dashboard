@@ -32,13 +32,43 @@ library(diffdf)
 # find all file names ending in .csv 
 files <- dir(pattern = "*.csv")
 
-# Reading in all the files into a list of dataframes
+# Reading in all the files into a list of dataframes and doing initial selecting down of variables relevant to the dashboard
 
 data_list <- files %>%
   map(read_csv) %>% 
   map(~dplyr::select(.x, contains("ethnicity"),contains("race"),contains("age"),contains("sex"),contains("gender"),contains("cond"),
                      contains("qual"),contains("like"),contains("dislike"),contains("pfs")),contains("pswq"),contains("cdi"),contains("idas"),contains("mfq"),
-                     contains("ss_choice_factor"),contains("identify_diff_gender_than_bio_sex_factor"),-contains("tim"))
+                     contains("ss_choice_factor"),contains("stib"),contains("identify_diff_gender_than_bio_sex_factor")) %>% 
+  map(~dplyr::select(.x, -contains("tim"))) %>% 
+  print()
+
+# Breaking out individual datasets to do data cleaning that's necessary for individual dataframes
+
+map(data_list, ~tibble(.x)) %>%
+    set_names(str_c("df_", 1:4)) %>% 
+    list2env(.GlobalEnv)
+
+empower <- df_1 %>% 
+  dplyr::rename(age = child_age, race = parent_ethnicity) %>% 
+  mutate(parent_sgm_ids= rowSums(dplyr::select(., contains("parent_gender")), na.rm = T) - 1,
+         child_sgm_ids= rowSums(dplyr::select(., contains("child_gender")), na.rm = T) - 1) %>% 
+  dplyr::select(contains("sgm")) %>% 
+  print()
+
+empower <- df_1 %>% 
+  dplyr::rename(age = child_age, race = parent_ethnicity) %>% 
+  rowwise() %>% 
+  mutate(parent_sgm_ids = any(c_across(c(parent_gender_agender,parent_gender_intersex, parent_gender_other:parent_gender_notsure))),
+         child_sgm_ids = any(c_across(c(child_gender_agender,child_gender_intersex, child_gender_other:child_gender_notsure)))) %>% 
+  ungroup() %>% 
+  mutate(randomized = factor(ifelse(is.na(condition), "No", "Yes")),
+         qual_feed = factor(ifelse(is.na(pfs_liked), "No", "Yes")),
+         sitb_assess = factor("No"),
+         non_rand_treat = factor("No")) %>% 
+  dplyr::select(randomized, sitb_assess, non_rand_treat) %>% 
+  print()
+
+
 
 ```
 
