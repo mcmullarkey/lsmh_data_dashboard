@@ -255,7 +255,8 @@ all_dash <- empower %>%
   bind_rows(cope) %>% 
   bind_rows(covid) %>% 
   bind_rows(yes_orig) %>% 
-  mutate(id = row_number())
+  mutate(id = row_number(),
+         rand_id = sample(id))
 
 glimpse(all_dash)
 
