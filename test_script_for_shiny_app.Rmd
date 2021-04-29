@@ -37,7 +37,7 @@ files <- dir(pattern = "*.csv")
 data_list <- files %>%
   map(read_csv) %>% 
   map(~dplyr::select(.x, contains("ethnicity"),contains("race"),contains("age"),contains("sex"),contains("gender"),contains("orientation"),contains("cond"),
-                     contains("qual"),contains("like"),contains("dislike"),contains("pfs"),contains("pswq"),contains("cdi"),contains("idas"),contains("mfq"),
+                     contains("qual"),contains("like"),contains("dislike"),contains("pfs"),contains("pswq"),contains("cdi"),contains("idas"),contains("phq"),contains("mfq"),
                      contains("ss_choice_factor"),contains("sitb"),contains("identify_diff_gender_than_bio_sex_factor"))) %>% 
   map(~dplyr::select(.x, -contains("tim"))) %>% 
   print()
@@ -97,6 +97,43 @@ cope <- df_2 %>%
          sgm = as.logical(case_when(
            
            gen_minoritized == TRUE | orien_minoritized == "Yes" ~ TRUE,
+           gen_minoritized == FALSE & orien_minoritized == "No" ~ FALSE,
+           TRUE ~ NA
+           
+         )),
+         race_minoritized = any(c_across(c(b_dem_race_american_indian_or_alaska_native:b_dem_race_native_hawaiian_or_other_pacific_islander, b_dem_race_black_african_american,b_dem_race_other_specify)))) %>% 
+  ungroup() %>% 
+  mutate(randomized = factor(ifelse(is.na(condition), "No", "Yes")),
+         qual_feed = factor(ifelse(is.na(pi_pfs_like), "No", "Yes")),
+         sitb_assess = factor(ifelse(is.na(b_sitbi_2), "No", "Yes")),
+         non_rand_treat = factor("No"),
+         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         age = b_screener_age, # We don't know the age but want these folks to be included in the dashboard for folks looking for adults
+         parent_report = factor("No"),
+         self_report = factor("Yes")) %>% 
+  dplyr::select(age, race_minoritized, sgm, gen_minoritized, orien_minoritized, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
+  print()
+
+
+```
+```{r clean cope}
+
+# Cleaning COPE data
+
+cope <- df_3 %>% 
+  #dplyr::rename(racial_identity = parent_ethnicity) %>% 
+  rowwise() %>% 
+  mutate(gen_minoritized = any(c_across(c(b_dem_gender_not_sure:b_dem_gender_male_to_female_transgender_mtf, b_dem_gender_transgender))),
+         orien_minoritized = factor(case_when(
+           
+          str_detect(b_dem_orientation, "Heterosexual/Straight") == TRUE ~ "No",
+          is.na(b_dem_orientation) ~ NA_character_,
+          TRUE ~ "Yes"
+           
+         )),
+         sgm = as.logical(case_when(
+           
+           gen_minoritized == TRUE | orien_minoritized == "Yes" ~ TRUE,
            !is.na(gen_minoritized) & !is.na(orien_minoritized) ~ NA,
            TRUE ~ FALSE
            
@@ -118,4 +155,3 @@ glimpse(df_2)
 
 
 ```
-
