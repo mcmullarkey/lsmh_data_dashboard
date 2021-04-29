@@ -259,6 +259,8 @@ all_dash <- empower %>%
 
 glimpse(all_dash)
 
+write_rds(all_dash, "lsmh_dash_data.rds")
+
 # Notes as of right now: All parents in BRAVE are given age of 18 since the age variable seems to be missing. For original YES data collection all participants were given the minimum age of the age range they selected (Ex. "11-13" would be 11)
 
 ```
