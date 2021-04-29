@@ -248,6 +248,14 @@ map2(df_combos$data_1, df_combos$data_2, ~{
 
 # Since that's true, will bind all data together
 
+all_dash <- empower %>% 
+  bind_rows(cope) %>% 
+  bind_rows(covid) %>% 
+  bind_rows(yes_orig)
+
+glimpse(all_dash)
+
+# Notes as of right now: All parents in BRAVE are given age of 18 since the age variable seems to be missing. For original YES data collection all participants were given the minimum age of the age range they selected (Ex. "11-13" would be 11)
 
 ```
 
