@@ -266,3 +266,26 @@ write_rds(all_dash, "lsmh_dash_data.rds")
 
 ```
 
+```{r}
+
+## Now testing the functions within the app
+
+create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var, qual_var, rand_var, non_rand_var, rec_ssi_var, self_var, parent_var, study_var){
+    
+    data_highlight <- .data %>% 
+        filter(age >= {{min_age}} & age <= {{max_age}},
+               )
+    
+    .data %>% 
+        ggplot(aes(x=id,y=rand_id)) + 
+        geom_jitter(alpha=0.3) +
+        geom_point(data=data_highlight, 
+                   aes(x=id,y=rand_id), 
+                   color='blue', alpha = 0.6) +
+        labs(x = "Participant ID", y = "Random Number (For Plotting)")
+    
+}
+
+```
+
+
