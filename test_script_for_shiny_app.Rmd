@@ -72,7 +72,7 @@ empower <- df_1 %>%
          qual_feed = factor(ifelse(is.na(pfs_liked), "No", "Yes")),
          sitb_assess = factor("No"),
          non_rand_treat = factor("No"),
-         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         rec_ssi = factor(ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No")),
          age = 18, # We don't know the age but want these folks to be included in the dashboard for folks looking for adults
          parent_report = factor("Yes"),
          self_report = factor("Yes"),
@@ -110,7 +110,7 @@ cope <- df_2 %>%
          qual_feed = factor(ifelse(is.na(pi_pfs_like), "No", "Yes")),
          sitb_assess = factor(ifelse(is.na(b_sitbi_2), "No", "Yes")),
          non_rand_treat = factor("No"),
-         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         rec_ssi = factor(ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No")),
          age = b_screener_age, # We don't know the age but want these folks to be included in the dashboard for folks looking for adults
          parent_report = factor("No"),
          self_report = factor("Yes"),
@@ -166,7 +166,7 @@ covid <- df_3 %>%
          qual_feed = factor("No"),
          sitb_assess = factor("No"),
          non_rand_treat = factor("No"),
-         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         rec_ssi = factor(ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No")),
          parent_report = factor("No"),
          self_report = factor("Yes"),
          study = factor("COVID RR")) %>% 
@@ -217,7 +217,7 @@ yes_orig <- df_4 %>%
          qual_feed = factor(ifelse(is.na(pi_like_activity_qual), "No", "Yes")),
          sitb_assess = factor("No"),
          non_rand_treat = factor("Yes"),
-         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         rec_ssi = factor(ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No")),
          parent_report = factor("No"),
          self_report = factor("Yes"),
          study = factor("YES Original")) %>% 
