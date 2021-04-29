@@ -127,6 +127,7 @@ cope <- df_2 %>%
 
 
 ```
+
 ```{r clean cope}
 
 # Cleaning COPE data
@@ -175,6 +176,8 @@ covid <- df_3 %>%
 
 
 ```
+
+
 ```{r clean yes original data collection}
 
 # Cleaning COPE data
