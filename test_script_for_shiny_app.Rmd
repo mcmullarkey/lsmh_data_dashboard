@@ -22,6 +22,8 @@ if(!require(glue)){install.packages('glue')}
 library(glue)
 if(!require(diffdf)){install.packages('diffdf')}
 library(diffdf)
+if(!require(janitor)){install.packages('janitor')}
+library(janitor)
 
 ```
 
@@ -73,8 +75,9 @@ empower <- df_1 %>%
          rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
          age = 18, # We don't know the age but want these folks to be included in the dashboard for folks looking for adults
          parent_report = factor("Yes"),
-         self_report = factor("Yes")) %>% 
-  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
+         self_report = factor("Yes"),
+         study = factor("Empower RCT")) %>% 
+  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report, study) %>% 
   print()
 
 ```
@@ -117,8 +120,9 @@ cope <- df_2 %>%
            race_minoritized == TRUE ~ "Yes",
            TRUE ~ NA_character_
            
-         ))) %>% 
-  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
+         )),
+         study = factor("COPE")) %>% 
+  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report, study) %>% 
   print()
 
 
@@ -164,8 +168,9 @@ covid <- df_3 %>%
          non_rand_treat = factor("No"),
          rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
          parent_report = factor("No"),
-         self_report = factor("Yes")) %>% 
-  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
+         self_report = factor("Yes"),
+         study = factor("COVID RR")) %>% 
+  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report, study) %>% 
   print()
 
 
@@ -214,8 +219,35 @@ yes_orig <- df_4 %>%
          non_rand_treat = factor("Yes"),
          rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
          parent_report = factor("No"),
-         self_report = factor("Yes")) %>% 
-  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
+         self_report = factor("Yes"),
+         study = factor("YES Original")) %>% 
+  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report, study) %>% 
   print()
 
 ```
+
+```{r comparing data frames}
+
+# Comparing the data frames once
+
+compare_df_cols_same(empower, cope)
+
+# Do it for all possible comparisons (Right now this includes comparisons of the data frames against themselves)
+
+dfs_1 <- tibble(data_1 = list(empower, cope, covid, yes_orig))
+dfs_2 <- tibble(data_2 = list(empower, cope, covid, yes_orig))
+
+df_combos <- expand_grid(dfs_1, dfs_2) %>% 
+  print()
+
+map2(df_combos$data_1, df_combos$data_2, ~{
+  
+  compare_df_cols_same(.x, .y)
+  
+})
+
+# Since that's true, will bind all data together
+
+
+```
+
