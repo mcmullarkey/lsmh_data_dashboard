@@ -110,7 +110,14 @@ cope <- df_2 %>%
          rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
          age = b_screener_age, # We don't know the age but want these folks to be included in the dashboard for folks looking for adults
          parent_report = factor("No"),
-         self_report = factor("Yes")) %>% 
+         self_report = factor("Yes"),
+         race_minoritized = factor(case_when(
+           
+           race_minoritized == FALSE ~ "No",
+           race_minoritized == TRUE ~ "Yes",
+           TRUE ~ NA_character_
+           
+         ))) %>% 
   dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
   print()
 
@@ -161,10 +168,54 @@ covid <- df_3 %>%
   dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
   print()
 
-glimpse(df_3)
 
-covid %>% 
-  count(sgm)
+```
+```{r clean yes original data collection}
 
+# Cleaning COPE data
+
+yes_orig <- df_4 %>% 
+  #dplyr::rename(racial_identity = parent_ethnicity) %>% 
+  mutate(gen_minoritized = factor(case_when(
+    
+    str_detect(identify_diff_gender_than_bio_sex_factor, "Yes") == T ~ "Yes",
+    str_detect(identify_diff_gender_than_bio_sex_factor, "Unsure") == T ~ "Yes",
+    is.na(identify_diff_gender_than_bio_sex_factor) ~ NA_character_,
+    TRUE ~ "No"
+    
+  )),
+         orien_minoritized = factor(case_when(
+           
+          str_detect(sexual_orientation, "Heterosexual") == TRUE ~ "No",
+          str_detect(sexual_orientation, "I do not want to respond") == TRUE ~ "No",
+          is.na(sexual_orientation) ~ NA_character_,
+          TRUE ~ "Yes"
+           
+         )),
+         sgm = as.logical(case_when(
+           
+           gen_minoritized == "Yes" | orien_minoritized == "Yes" ~ TRUE,
+           gen_minoritized == "No" & orien_minoritized == "No" ~ FALSE,
+           TRUE ~ NA
+           
+         )),
+         race_minoritized = factor(case_when(
+    
+    str_detect(race_ethnicity, "Caucasian[:punct:]") == T ~ "Yes",
+    str_detect(race_ethnicity, "Caucasian") == T ~ "No",
+    is.na(race_ethnicity) ~ NA_character_,
+    TRUE ~ "Yes"
+    
+  )),
+  age = as.numeric(str_extract(age, "[:digit:][:digit:]"))) %>% 
+  mutate(randomized = factor("No"),
+         qual_feed = factor(ifelse(is.na(pi_like_activity_qual), "No", "Yes")),
+         sitb_assess = factor("No"),
+         non_rand_treat = factor("Yes"),
+         rec_ssi = ifelse(randomized == "Yes" | non_rand_treat == "Yes", "Yes", "No"),
+         parent_report = factor("No"),
+         self_report = factor("Yes")) %>% 
+  dplyr::select(age, race_minoritized, sgm, sitb_assess, qual_feed, randomized, non_rand_treat, rec_ssi, self_report, parent_report) %>% 
+  print()
 
 ```
