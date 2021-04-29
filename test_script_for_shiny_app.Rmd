@@ -251,7 +251,8 @@ map2(df_combos$data_1, df_combos$data_2, ~{
 all_dash <- empower %>% 
   bind_rows(cope) %>% 
   bind_rows(covid) %>% 
-  bind_rows(yes_orig)
+  bind_rows(yes_orig) %>% 
+  mutate(id = row_number())
 
 glimpse(all_dash)
 
