@@ -364,7 +364,13 @@ create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var,
         filter(age >= {{min_age}} & age <= {{max_age}},
                sgm == deframe(multi_ex[1,"sgm_pipe"]) | sgm == deframe(multi_ex[2,"sgm_pipe"]),
                race_minoritized == deframe(multi_ex[1,"race_pipe"]) | race_minoritized == deframe(multi_ex[2,"race_pipe"]),
-               sitb_assess == deframe(multi_ex[1,"sitb_pipe"]) | sitb_assess == deframe(multi_ex[2,"sitb_pipe"]))
+               sitb_assess == deframe(multi_ex[1,"sitb_pipe"]) | sitb_assess == deframe(multi_ex[2,"sitb_pipe"]),
+               qual_feed == deframe(multi_ex[1,"qual_pipe"]) | qual_feed == deframe(multi_ex[2,"qual_pipe"]),
+               randomized == deframe(multi_ex[1,"rand_pipe"]) | randomized == deframe(multi_ex[2,"rand_pipe"]),
+               non_rand_treat == deframe(multi_ex[1,"non_rand_pipe"]) | non_rand_treat == deframe(multi_ex[2,"non_rand_pipe"]),
+               rec_ssi == deframe(multi_ex[1,"rec_ssi_pipe"]) | rec_ssi == deframe(multi_ex[2,"rec_ssi_pipe"]),
+               self_report == deframe(multi_ex[1,"self_pipe"]) | self_report == deframe(multi_ex[2,"self_pipe"]),
+               parent_report == deframe(multi_ex[1,"parent_pipe"]) | parent_report == deframe(multi_ex[2,"parent_pipe"]))
     
     .data %>% 
         ggplot(aes(x=id,y=rand_id)) + 
@@ -375,6 +381,10 @@ create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var,
         labs(x = "Participant ID", y = "Random Number (For Plotting)")
     
 }
+
+all_dash %>% 
+  create_scatter(min_age = 13, max_age= 50, race_var = c("Yes", "No"), sgm_var = c("Yes", "No"), sitb_var = "Yes", qual_var = c("Yes","No"),
+                 rand_var = c("Yes","No"), non_rand_var = "No", rec_ssi_var = c("Yes"),self_var=c("Yes"),parent_var=c("Yes","No"))
 
 ```
 
