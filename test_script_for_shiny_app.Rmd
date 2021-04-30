@@ -312,7 +312,32 @@ vec_var <- enframe(c("No")) %>%
   deframe() %>% 
   print()
 
-vec_for_sep <- ifelse(str_length(vec_var) == 2, vec_var, c(as.character(glue("{vec_var}")),as.character(glue("{vec_var}"))))
+# Write a function
+
+make_screen <- function(screen_var){
+  
+  vec_var <- enframe(screen_var) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(weight = case_when(
+    max(row) == 1 & row == 1 ~ 2,
+    max(row) == 2 & row == 1 ~ 1,
+    max(row) == 2 & row == 2 ~ 1)) %>%
+  uncount() %>% 
+  dplyr::select(value) %>% 
+  deframe()
+  
+}
+
+test_ex <- make_screen(c("Yes","No"))
+
+race_var <- "Yes"
+sgm_var <- c("Yes", "No")
+sitb_var <- "No"
+
+screening <- list(race_var = race_var, sgm_var = sgm_var, sitb_var = sitb_var)
+
+multi_ex <- map_dfc(screening, make_screen) %>% 
+  print()
 
 create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var, qual_var, rand_var, non_rand_var, rec_ssi_var, self_var, parent_var, study_var){
     
