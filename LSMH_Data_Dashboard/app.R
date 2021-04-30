@@ -115,6 +115,7 @@ ui <- fluidPage(
     titlePanel("LSMH Data (Blue Represents Included Participants)"),
     sidebarLayout(
         sidebarPanel(
+            style = "overflow-y:scroll; max-height: 1000px; position:relative;",
             numericInput("minimum_age", "Minimum Age", 13, min = 9, max = 85),
             numericInput("maximum_age", "Maximum Age", 14, min = 9, max = 85),
             checkboxGroupInput("race_included", 
@@ -156,7 +157,7 @@ ui <- fluidPage(
                                h3("Has Self-Report Data?"), 
                                choices = c("Yes" = "Yes", 
                                               "No" = "No"),
-                               selected = c(1,2)),
+                               selected = c("Yes","No")),
             checkboxGroupInput("has_parent_report", 
                                h3("Has Parent-Report Data?"), 
                                choices = c("Yes" = "Yes", 
