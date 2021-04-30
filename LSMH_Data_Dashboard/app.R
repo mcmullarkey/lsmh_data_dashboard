@@ -147,6 +147,11 @@ ui <- fluidPage(
                                choices = c("Yes" = "Yes", 
                                               "No" = "No"),
                                selected = c("Yes","No")),
+            checkboxGroupInput("provide_qual", 
+                               h3("Provided Qualitative Feedback on Treatment?"), 
+                               choices = c("Yes" = "Yes", 
+                                           "No" = "No"),
+                               selected = c("Yes","No")),
             checkboxGroupInput("has_self_report", 
                                h3("Has Self-Report Data?"), 
                                choices = c("Yes" = "Yes", 
@@ -171,12 +176,16 @@ server <- function(input, output, session) {
     
     output$scatter <- renderPlot({
         
-        create_scatter(init_data, min_age = input$minimum_age, max_age = input$maximum_age)
+        create_scatter(init_data, min_age = input$minimum_age, max_age = input$maximum_age, race_var = input$race_included, sgm_var = input$sgm_included, 
+                       sitb_var = input$sitbs_assessed, qual_var = input$provide_qual, rand_var = input$rand_to_treat, non_rand_var = input$rec_treat, 
+                       rec_ssi_var = input$rec_any_ssi, self_var= input$has_self_report, parent_var= input$has_parent_report)
     }, res = 96)
     
     output$n <- renderText({
         
-        get_n(init_data, min_age = input$minimum_age, max_age = input$maximum_age)
+        get_n(init_data, min_age = input$minimum_age, max_age = input$maximum_age, race_var = input$race_included, sgm_var = input$sgm_included, 
+              sitb_var = input$sitbs_assessed, qual_var = input$provide_qual, rand_var = input$rand_to_treat, non_rand_var = input$rec_treat, 
+              rec_ssi_var = input$rec_any_ssi, self_var= input$has_self_report, parent_var= input$has_parent_report)
     })
 }
 
