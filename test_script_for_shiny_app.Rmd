@@ -330,23 +330,25 @@ make_screen <- function(screen_var){
 
 # Apply it once 
 
-test_ex <- make_screen(c("Yes","No"))
+test_ex <- make_screen(c(NA_character_))
 
 # Apply it across multiple vectors
 
 race_var <- "Yes"
 sgm_var <- c("Yes", "No")
 sitb_var <- "No"
+qual_var <- c(NA_character_)
 
-screening <- list(race_var = race_var, sgm_var = sgm_var, sitb_var = sitb_var)
+screening <- list(race_var = race_var, sgm_var = sgm_var, sitb_var = sitb_var, qual_var = qual_var)
 
 multi_ex <- map_dfc(screening, make_screen) %>% 
   print()
 
-# Use that data to filter the dataset (Potential future problem, if this isn't assessed/there's an NA the person gets dropped from all inclusion criteria even if they would otherwise qualify, need to figure out if there's a fix for this)
+# Use that data to filter the dataset (Potential future problem, if this isn't assessed/there's an NA the person gets dropped from all inclusion criteria even if they would otherwise qualify, need to figure out if there's a fix for this. In the meantime just tell folks they have to leave at least one box checked in each category)
 
 data_highlight <- all_dash %>% 
-        filter(sgm == deframe(multi_ex[1,"sgm_var"]) | sgm == deframe(multi_ex[2,"sgm_var"]))
+        filter(sgm == deframe(multi_ex[1,"sgm_var"]) | sgm == deframe(multi_ex[2,"sgm_var"]),
+               qual_feed == deframe(multi_ex[1,"qual_var"]) | sgm == deframe(multi_ex[2,"qual_var"]))
 
 
 create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var, qual_var, rand_var, non_rand_var, rec_ssi_var, self_var, parent_var, study_var){
