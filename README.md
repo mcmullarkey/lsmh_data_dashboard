@@ -1,1 +1,3 @@
-# lsmh_data_dashboard
+# LSMH Data Dashboard
+
+This is the code for a Shiny app with a 10,000 foot view of the Lab for Scalable Mental Health data. This app helps us figure out how many of our participants meet certain criteria and can be consulted to give funders, collaborators, graduate students, and project coordinators mission-critical information. The app itself is [here](https://mcmullarkey.shinyapps.io/LSMH_Data_Dashboard/)
