@@ -275,6 +275,45 @@ write_rds(all_dash, "LSMH_Data_Dashboard/lsmh_dash_data.rds")
 
 ## Now testing the functions within the app
 
+# Checking if length is already 2, and if not repeat the value to make it be 2, if yes then retain both values
+
+# Check that this framework works in all cases
+
+vec_var <- enframe(c("Yes","No")) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(weight = case_when(
+    max(row) == 1 & row == 1 ~ 2,
+    max(row) == 2 & row == 1 ~ 1,
+    max(row) == 2 & row == 2 ~ 1)) %>%
+  uncount() %>% 
+  dplyr::select(value) %>% 
+  deframe() %>% 
+  print()
+
+vec_var <- enframe(c("Yes")) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(weight = case_when(
+    max(row) == 1 & row == 1 ~ 2,
+    max(row) == 2 & row == 1 ~ 1,
+    max(row) == 2 & row == 2 ~ 1)) %>%
+  uncount() %>% 
+  dplyr::select(value) %>% 
+  deframe() %>% 
+  print()
+
+vec_var <- enframe(c("No")) %>% 
+  mutate(row = row_number()) %>% 
+  mutate(weight = case_when(
+    max(row) == 1 & row == 1 ~ 2,
+    max(row) == 2 & row == 1 ~ 1,
+    max(row) == 2 & row == 2 ~ 1)) %>%
+  uncount() %>% 
+  dplyr::select(value) %>% 
+  deframe() %>% 
+  print()
+
+vec_for_sep <- ifelse(str_length(vec_var) == 2, vec_var, c(as.character(glue("{vec_var}")),as.character(glue("{vec_var}"))))
+
 create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var, qual_var, rand_var, non_rand_var, rec_ssi_var, self_var, parent_var, study_var){
     
     data_highlight <- .data %>% 
