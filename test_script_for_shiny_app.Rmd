@@ -334,12 +334,12 @@ test_ex <- make_screen(c(NA_character_))
 
 # Apply it across multiple vectors
 
-race_var <- "Yes"
+race_var <- "No"
 sgm_var <- c("Yes", "No")
-sitb_var <- "No"
-qual_var <- c(NA_character_)
+sitb_var <- "Yes"
+# qual_var <- c(NA_character_)
 
-screening <- list(race_var = race_var, sgm_var = sgm_var, sitb_var = sitb_var, qual_var = qual_var)
+screening <- list(race_var = race_var, sgm_var = sgm_var, sitb_var = sitb_var)
 
 multi_ex <- map_dfc(screening, make_screen) %>% 
   print()
@@ -348,14 +348,23 @@ multi_ex <- map_dfc(screening, make_screen) %>%
 
 data_highlight <- all_dash %>% 
         filter(sgm == deframe(multi_ex[1,"sgm_var"]) | sgm == deframe(multi_ex[2,"sgm_var"]),
-               qual_feed == deframe(multi_ex[1,"qual_var"]) | sgm == deframe(multi_ex[2,"qual_var"]))
+               race_minoritized == deframe(multi_ex[1,"race_var"]) | race_minoritized == deframe(multi_ex[2,"race_var"]),
+               sitb_assess == deframe(multi_ex[1,"sitb_var"]) | sitb_assess == deframe(multi_ex[2,"sitb_var"])) %>% 
+  print()
 
 
-create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var, qual_var, rand_var, non_rand_var, rec_ssi_var, self_var, parent_var, study_var){
+create_scatter <- function(.data, min_age, max_age, race_var, sgm_var, sitb_var, qual_var, rand_var, non_rand_var, rec_ssi_var, self_var, parent_var){
     
+    screening <- list(race_pipe = {{race_var}}, sgm_pipe = {{sgm_var}}, sitb_pipe = {{sitb_var}}, qual_pipe = {{qual_var}}, rand_pipe = {{rand_var}},
+                      non_rand_pipe = {{non_rand_var}}, rec_ssi_pipe = {{rec_ssi_var}}, self_pipe = {{self_var}}, parent_pipe = {{parent_var}})
+    
+    multi_ex <- map_dfc(screening, make_screen)
+  
     data_highlight <- .data %>% 
         filter(age >= {{min_age}} & age <= {{max_age}},
-               )
+               sgm == deframe(multi_ex[1,"sgm_pipe"]) | sgm == deframe(multi_ex[2,"sgm_pipe"]),
+               race_minoritized == deframe(multi_ex[1,"race_pipe"]) | race_minoritized == deframe(multi_ex[2,"race_pipe"]),
+               sitb_assess == deframe(multi_ex[1,"sitb_pipe"]) | sitb_assess == deframe(multi_ex[2,"sitb_pipe"]))
     
     .data %>% 
         ggplot(aes(x=id,y=rand_id)) + 
